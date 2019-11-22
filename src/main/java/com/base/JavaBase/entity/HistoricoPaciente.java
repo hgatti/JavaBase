@@ -7,13 +7,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import org.hibernate.annotations.GeneratorType;
 
 @Entity(name = "HistoricoPaciente")
 @Table(name = "historico_paciente")
 public class HistoricoPaciente {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idt_historico_paciente")
     private Long id;
 

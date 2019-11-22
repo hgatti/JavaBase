@@ -1,15 +1,13 @@
 package com.base.JavaBase.service;
 
+import com.base.JavaBase.entity.Diagnostico;
+import com.base.JavaBase.entity.HistoricoFamiliar;
 import com.base.JavaBase.entity.HistoricoPaciente;
 import com.base.JavaBase.entity.Paciente;
 import com.base.JavaBase.entity.Tratamento;
 import com.base.JavaBase.repository.HistoricoPacienteRepository;
 import com.base.JavaBase.repository.TratamentoRepository;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.RandomUtils;
 import com.base.JavaBase.repository.PacienteRepository;
-import java.time.LocalDate;
-import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +34,7 @@ public class GenericService {
     public void run() {
         LOG.info("==========STARTED===========");
 
-        Paciente paciente = new Paciente();
-
-        paciente.setSusCode(RandomUtils.nextLong(1,100));
-        paciente.setCpf(RandomUtils.nextLong(1,100));
-        paciente.setNome("Gugu");
-        paciente.setDatNasc(LocalDate.now().minusYears(10));
-        paciente.setSexo("masculino");
+        Paciente paciente = createPaciente("masculino");
 
         Tratamento tratamento = new Tratamento();
 
@@ -50,7 +42,6 @@ public class GenericService {
         tratamento.setCodigo(123L);
 
         HistoricoPaciente historicoPaciente = new HistoricoPaciente(paciente, tratamento);
-        historicoPaciente.setId(20L);
 
         tratamentoRepository.save(tratamento);
 
@@ -61,4 +52,43 @@ public class GenericService {
         LOG.info("==========ENDED===========");
 
     }
+
+    public Paciente createPaciente(String sexo) {
+        Paciente paciente = new Paciente();
+
+        paciente.setSusCode(RandomService.gerenateRandomNumber(10));
+        paciente.setCpf(RandomService.gerenateRandomNumber(9));
+        paciente.setNome(RandomService.getMaleName());
+        paciente.setDatNasc(RandomService.getDateNasc(18, 40));
+        paciente.setSexo(sexo);
+
+        return paciente;
+    }
+
+    public HistoricoPaciente createHistoricoPaciente(Paciente paciente, Tratamento tratamento) {
+        HistoricoPaciente historicoPaciente = new HistoricoPaciente(paciente, tratamento);
+        historicoPaciente.setDataRegistro(RandomService.getDateTime(0, 4));
+
+        return historicoPaciente;
+    }
+
+    public HistoricoPaciente createHistoricoPaciente(Paciente paciente, Diagnostico diagnostico) {
+        HistoricoPaciente historicoPaciente = new HistoricoPaciente(paciente, diagnostico);
+        historicoPaciente.setDataRegistro(RandomService.getDateTime(0, 4));
+
+        return historicoPaciente;
+    }
+
+    public HistoricoFamiliar createHistoricoFamiliar(Paciente paciente) {
+        HistoricoFamiliar historicoFamiliar = new HistoricoFamiliar(paciente);
+
+        historicoFamiliar.setCpf(RandomService.gerenateRandomNumber(9));
+        historicoFamiliar.setDatNasc(RandomService.getDateNasc(18, 40));
+        historicoFamiliar.setNome(RandomService.getFemaleName());
+        historicoFamiliar.setSexo("feminino");
+        historicoFamiliar.setGrauParentecso("materno");
+
+        return historicoFamiliar;
+    }
+
 }
