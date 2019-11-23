@@ -17,8 +17,8 @@ public class Atende {
     @Column(name = "idt_atende")
     private Long id;
 
-    @Column(name = "codigo_hospital")
-    private Long hospitalCode;
+    @Column(name = "codigo_medico")
+    private Long medicoCode;
 
     @Column(name = "codigo_sus_paciente_hospital")
     private Long pacienteHospitalSusCode;
@@ -29,9 +29,9 @@ public class Atende {
     public Atende() {
     }
 
-    public Atende(Hospital hospital, Paciente paciente) {
+    public Atende(Medico medico, Paciente paciente) {
         this.pacienteHospitalSusCode = paciente.getSusCode();
-        this.hospitalCode = hospital.getCodigo();
+        this.medicoCode = medico.getCrm();
     }
 
     public Long getId() {
@@ -42,12 +42,12 @@ public class Atende {
         this.id = id;
     }
 
-    public Long getHospitalCode() {
-        return hospitalCode;
+    public Long getMedicoCode() {
+        return medicoCode;
     }
 
-    public void setHospitalCode(Long hospitalCode) {
-        this.hospitalCode = hospitalCode;
+    public void setMedicoCode(Long medicoCode) {
+        this.medicoCode = medicoCode;
     }
 
     public Long getPacienteHospitalSusCode() {
