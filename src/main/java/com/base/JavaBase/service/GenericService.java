@@ -1,26 +1,29 @@
 package com.base.JavaBase.service;
 
-import com.base.JavaBase.JavaBaseApplication;
+import com.base.JavaBase.entity.Cids;
 import com.base.JavaBase.entity.Diagnostico;
 import com.base.JavaBase.entity.HistoricoFamiliar;
 import com.base.JavaBase.entity.HistoricoPaciente;
 import com.base.JavaBase.entity.Hospital;
 import com.base.JavaBase.entity.Medico;
 import com.base.JavaBase.entity.Paciente;
+import com.base.JavaBase.entity.PossuiCids;
 import com.base.JavaBase.entity.Tratamento;
+import com.base.JavaBase.repository.CidsRepository;
+import com.base.JavaBase.repository.DiagnosticoRepository;
 import com.base.JavaBase.repository.HistoricoPacienteRepository;
 import com.base.JavaBase.repository.HospitalRepository;
 import com.base.JavaBase.repository.MedicoRepository;
+import com.base.JavaBase.repository.PossuiCidsRepository;
 import com.base.JavaBase.repository.TratamentoRepository;
 import com.base.JavaBase.repository.PacienteRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import javafx.scene.control.RadioMenuItem;
 import org.apache.commons.lang3.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,24 +48,63 @@ public class GenericService {
     @Autowired
     private MedicoRepository medicoRepository;
 
+    @Autowired
+    private CidsRepository cidsRepository;
+
+    @Autowired
+    private DiagnosticoRepository diagnosticoRepository;
+
+    @Autowired
+    private PossuiCidsRepository possuiCidsRepository;
+
     @Transactional
     @Scheduled(cron = "0 0/1 * * * *")
     public void run() {
         LOG.info("==========STARTED===========");
 
-        Optional<Hospital> hospitalOptional = hospitalRepository.findById(4L);
+        Optional<Cids> cid = cidsRepository.findById("C91");
 
-        if (hospitalOptional.isPresent()) {
+        for (int i = 0; i < 5; i++) {
+            if (cid.isPresent()) {
 
-            for (int i = 0; i < 20; i++) {
+                List<Paciente> pacientes = pacienteRepository.findAll();
 
-                Medico medico = createMedico(hospitalOptional.get());
+                int j = RandomUtils.nextInt(0, pacientes.size());
 
-                medicoRepository.save(medico);
+                Paciente paciente = pacientes.get(j);
+
+                List<Long> idtList1 = new ArrayList<>();
+
+                idtList1.add(202020380L);
+
+                List<Diagnostico> diagnosticos = diagnosticoRepository.findAllById(idtList1);
+
+                List<Long> idtList2 = new ArrayList<>();
+
+                idtList2.add(304060232L);
+                idtList2.add(304060240L);
+
+                List<Tratamento> tratamentos = tratamentoRepository.findAllById(idtList2);
+
+                HistoricoPaciente historicoPaciente1 = createHistoricoPaciente(paciente, diagnosticos.get(RandomUtils.nextInt(0, diagnosticos.size())));
+
+                HistoricoPaciente historicoPaciente2 = createHistoricoPaciente(paciente, tratamentos.get(RandomUtils.nextInt(0, tratamentos.size())));
+
+                historicoPaciente2.setDataRegistro(historicoPaciente1.getDataRegistro().plusDays(RandomUtils.nextInt(1,5)));
+
+                PossuiCids possuiCids = new PossuiCids(cid.get(), paciente);
+
+                possuiCidsRepository.save(possuiCids);
+
+                historicoPacienteRepository.save(historicoPaciente1);
+                historicoPacienteRepository.save(historicoPaciente2);
+
+            } else {
+                LOG.info("CID NAO ENCONTRADO");
+
             }
-        } else {
-            LOG.info("Hospital não encontrado");
         }
+
         LOG.info("==========ENDED===========");
 
     }
@@ -72,8 +114,13 @@ public class GenericService {
 
         paciente.setSusCode(RandomService.gerenateRandomNumber(10));
         paciente.setCpf(RandomService.gerenateRandomNumber(9));
-        paciente.setNome(RandomService.getMaleName());
-        paciente.setDatNasc(RandomService.getDateNasc(18, 40));
+        paciente.setDatNasc(RandomService.getDateNasc(1, 80));
+
+        if (sexo.equals("masculino")) {
+            paciente.setNome(RandomService.getMaleName());
+        } else {
+            paciente.setNome(RandomService.getFemaleName());
+        }
         paciente.setSexo(sexo);
 
         return paciente;
