@@ -1,14 +1,14 @@
 package com.base.JavaBase.service;
 
-import com.base.JavaBase.entity.Cids;
+import com.base.JavaBase.entity.Atende;
 import com.base.JavaBase.entity.Diagnostico;
 import com.base.JavaBase.entity.HistoricoFamiliar;
 import com.base.JavaBase.entity.HistoricoPaciente;
 import com.base.JavaBase.entity.Hospital;
 import com.base.JavaBase.entity.Medico;
 import com.base.JavaBase.entity.Paciente;
-import com.base.JavaBase.entity.PossuiCids;
 import com.base.JavaBase.entity.Tratamento;
+import com.base.JavaBase.repository.AtendeRepository;
 import com.base.JavaBase.repository.CidsRepository;
 import com.base.JavaBase.repository.DiagnosticoRepository;
 import com.base.JavaBase.repository.HistoricoPacienteRepository;
@@ -17,6 +17,7 @@ import com.base.JavaBase.repository.MedicoRepository;
 import com.base.JavaBase.repository.PossuiCidsRepository;
 import com.base.JavaBase.repository.TratamentoRepository;
 import com.base.JavaBase.repository.PacienteRepository;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -57,52 +58,29 @@ public class GenericService {
     @Autowired
     private PossuiCidsRepository possuiCidsRepository;
 
+    @Autowired
+    private AtendeRepository atendeRepository;
+
     @Transactional
     @Scheduled(cron = "0 0/1 * * * *")
     public void run() {
         LOG.info("==========STARTED===========");
 
-        Optional<Cids> cid = cidsRepository.findById("C91");
+        List<Paciente> pacientes = pacienteRepository.findAllPacientesByCodigoCID("C18");
 
-        for (int i = 0; i < 5; i++) {
-            if (cid.isPresent()) {
+        LOG.info("pacientes={}", pacientes.size());
 
-                List<Paciente> pacientes = pacienteRepository.findAll();
+        List<String> especialidades = new ArrayList<>();
 
-                int j = RandomUtils.nextInt(0, pacientes.size());
+       // especialidades.add("Neurologista");
+        especialidades.add("Gastroenterologia");
+        //especialidades.add("Neurologista");
 
-                Paciente paciente = pacientes.get(j);
+        List<Medico> medicos = medicoRepository.findAllMedicosByEspecialidade(especialidades);
 
-                List<Long> idtList1 = new ArrayList<>();
-
-                idtList1.add(202020380L);
-
-                List<Diagnostico> diagnosticos = diagnosticoRepository.findAllById(idtList1);
-
-                List<Long> idtList2 = new ArrayList<>();
-
-                idtList2.add(304060232L);
-                idtList2.add(304060240L);
-
-                List<Tratamento> tratamentos = tratamentoRepository.findAllById(idtList2);
-
-                HistoricoPaciente historicoPaciente1 = createHistoricoPaciente(paciente, diagnosticos.get(RandomUtils.nextInt(0, diagnosticos.size())));
-
-                HistoricoPaciente historicoPaciente2 = createHistoricoPaciente(paciente, tratamentos.get(RandomUtils.nextInt(0, tratamentos.size())));
-
-                historicoPaciente2.setDataRegistro(historicoPaciente1.getDataRegistro().plusDays(RandomUtils.nextInt(1,5)));
-
-                PossuiCids possuiCids = new PossuiCids(cid.get(), paciente);
-
-                possuiCidsRepository.save(possuiCids);
-
-                historicoPacienteRepository.save(historicoPaciente1);
-                historicoPacienteRepository.save(historicoPaciente2);
-
-            } else {
-                LOG.info("CID NAO ENCONTRADO");
-
-            }
+        for (Paciente paciente : pacientes) {
+            Atende atende = new Atende(medicos.get(RandomUtils.nextInt(0, medicos.size())), paciente);
+            atendeRepository.save(atende);
         }
 
         LOG.info("==========ENDED===========");
@@ -114,7 +92,7 @@ public class GenericService {
 
         paciente.setSusCode(RandomService.gerenateRandomNumber(10));
         paciente.setCpf(RandomService.gerenateRandomNumber(9));
-        paciente.setDatNasc(RandomService.getDateNasc(1, 80));
+        paciente.setDatNasc(RandomService.getDateNasc(25, 65));
 
         if (sexo.equals("masculino")) {
             paciente.setNome(RandomService.getMaleName());

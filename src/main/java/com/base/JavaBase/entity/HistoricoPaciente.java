@@ -29,6 +29,9 @@ public class HistoricoPaciente {
     @Column(name = "dat_registro")
     private LocalDateTime dataRegistro;
 
+    @Column(name = "resultado_diag")
+    private String resultadoDiag;
+
     public HistoricoPaciente() {
     }
 
@@ -85,5 +88,13 @@ public class HistoricoPaciente {
 
     public void setDataRegistro(LocalDateTime dataRegistro) {
         this.dataRegistro = dataRegistro;
+    }
+
+    public String getResultadoDiag() {
+        return resultadoDiag;
+    }
+
+    public void setResultadoDiag(String resultadoDiag) {
+        this.resultadoDiag = resultadoDiag;
     }
 }

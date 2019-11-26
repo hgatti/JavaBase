@@ -32,8 +32,8 @@ public class RandomService {
     }
 
     public static String getEspecilidade() {
-        int i = RandomUtils.nextInt(0, 20);
-        return especialidades[i];
+        //int i = RandomUtils.nextInt(0, 20);
+        return "Gastroenterologia";
     }
 
     public static LocalDate getDateNasc(int idadeInicio, int idadeFim) {
@@ -67,6 +67,18 @@ public class RandomService {
         }
 
         return Long.valueOf(result);
+    }
+
+    public static String probabilidade() {
+        int i = RandomUtils.nextInt(1, 100);
+
+        if (i < 6) {
+            return "Insatisfatório";
+        } else if (i <= 12) {
+            return "Alterado";
+        } else {
+            return "Normal";
+        }
     }
 
 }
