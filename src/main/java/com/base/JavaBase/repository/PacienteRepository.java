@@ -12,11 +12,13 @@ public interface PacienteRepository extends JpaRepository<Paciente, Long> {
 
 
     @Query(value = " select * from paciente" +
-            " where (year(now()) - year(dat_nasc)) >= :idade ", nativeQuery = true)
+            " where (year(now()) - year(dat_nasc)) >= :idade " +
+            "  and sexo = 'feminino' ", nativeQuery = true)
     List<Paciente> findAllIdadeMaiorQue(@Param("idade") int idade);
 
     @Query(value = " select * from paciente" +
-            " where (year(now()) - year(dat_nasc)) <= :idade ", nativeQuery = true)
+            " where (year(now()) - year(dat_nasc)) <= :idade " +
+            "  and sexo = 'feminino' ", nativeQuery = true)
     List<Paciente> findAllIdadeMenorQue(@Param("idade") int idade);
 
     @Query(value = " select * from paciente" +

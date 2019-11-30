@@ -13,4 +13,10 @@ public interface MedicoRepository extends JpaRepository<Medico, Long> {
     @Query(value = " select * from medicos" +
             " where especialidade in :especialidades ", nativeQuery = true)
     List<Medico> findAllMedicosByEspecialidade(@Param("especialidades") List<String> especialidades);
+
+    @Query(value = "select * from medicos" +
+            " where codigo_hospital = :codigo " +
+            " and especialidade = :especialidade"
+           , nativeQuery = true)
+    List<Medico> findAllMedicosByCodHospitalAndEspecialidade(@Param("codigo") Long codigo, @Param("especialidade") String especialidade);
 }

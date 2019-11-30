@@ -17,6 +17,7 @@ import com.base.JavaBase.repository.MedicoRepository;
 import com.base.JavaBase.repository.PossuiCidsRepository;
 import com.base.JavaBase.repository.TratamentoRepository;
 import com.base.JavaBase.repository.PacienteRepository;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,20 +67,16 @@ public class GenericService {
     public void run() {
         LOG.info("==========STARTED===========");
 
-        List<Paciente> pacientes = pacienteRepository.findAllPacientesByCodigoCID("C18");
+        List<Medico> medicos = medicoRepository.findAllMedicosByCodHospitalAndEspecialidade(2L, "Ginecologista");
 
-        LOG.info("pacientes={}", pacientes.size());
+        List<BigInteger> codPacientesByProcDiag = historicoPacienteRepository.findDistinctCodSusPacienteByCodProcedDiag(203010086L);
 
-        List<String> especialidades = new ArrayList<>();
+        for (int i = 0; i < codPacientesByProcDiag.size(); i++) {
+            int j = RandomUtils.nextInt(0, medicos.size());
+            Atende atende = new Atende();
+            atende.setPacienteHospitalSusCode(codPacientesByProcDiag.get(i).longValue());
+            atende.setMedicoCode(medicos.get(j).getCrm());
 
-       // especialidades.add("Neurologista");
-        especialidades.add("Gastroenterologia");
-        //especialidades.add("Neurologista");
-
-        List<Medico> medicos = medicoRepository.findAllMedicosByEspecialidade(especialidades);
-
-        for (Paciente paciente : pacientes) {
-            Atende atende = new Atende(medicos.get(RandomUtils.nextInt(0, medicos.size())), paciente);
             atendeRepository.save(atende);
         }
 

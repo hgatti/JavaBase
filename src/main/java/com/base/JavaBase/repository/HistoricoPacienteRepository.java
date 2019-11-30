@@ -1,6 +1,7 @@
 package com.base.JavaBase.repository;
 
 import com.base.JavaBase.entity.HistoricoPaciente;
+import java.math.BigInteger;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +23,14 @@ public interface HistoricoPacienteRepository extends JpaRepository<HistoricoPaci
             "            HAVING Count(*) > 1) "
             , nativeQuery = true)
     List<HistoricoPaciente> findAllTwice(@Param("codigo") Long codigo);
+
+    @Query(value = "select * from historico_paciente " +
+            " where cod_proced_diag = :codigo " +
+            "   and resultado_diag = :resultado ", nativeQuery = true)
+    List<HistoricoPaciente> findAllByDiagnosticoCodeEResultado(@Param("codigo") Long codigo, @Param("resultado") String resultado);
+
+    @Query(value = "select distinct(codigo_sus_paciente) from historico_paciente" +
+            " where cod_proced_diag = :codigo "
+           , nativeQuery = true)
+    List<BigInteger> findDistinctCodSusPacienteByCodProcedDiag(@Param("codigo") Long codigo);
 }
