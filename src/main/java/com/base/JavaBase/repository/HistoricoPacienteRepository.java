@@ -33,4 +33,5 @@ public interface HistoricoPacienteRepository extends JpaRepository<HistoricoPaci
             " where cod_proced_diag = :codigo "
            , nativeQuery = true)
     List<BigInteger> findDistinctCodSusPacienteByCodProcedDiag(@Param("codigo") Long codigo);
+
 }

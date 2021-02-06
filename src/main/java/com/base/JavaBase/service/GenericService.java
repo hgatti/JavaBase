@@ -63,7 +63,7 @@ public class GenericService {
     private AtendeRepository atendeRepository;
 
     @Transactional
-    @Scheduled(cron = "0 0/1 * * * *")
+   // @Scheduled(cron = "0 0/1 * * * *")
     public void run() {
         LOG.info("==========STARTED===========");
 
